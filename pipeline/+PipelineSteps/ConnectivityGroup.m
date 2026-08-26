@@ -150,6 +150,7 @@ classdef ConnectivityGroup < internal.PipelineStep
             data.dfe = nnz(groupInfo.Selected) - 1; % df is number of acquisitions selected minus 1
             data.demographics = Dictionary;
             data.demographics.LDCExclusions = LDCExclusions;
+            data.demographics.GroupAcquisitionInfo = groupInfo;
             data.probe.link.Excluded = isnan(data.R(:, 1));
 
             % Save
