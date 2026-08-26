@@ -4,6 +4,7 @@ classdef ConnectivityGroupSeed < internal.PipelineStep
         Suffix                              = "Seed"
         SeedChannelIndices (1,:) double     = nan
         DrawChannelLines   (1,1) logical    = false
+        AtlasViewerPath    (1,1) string {mustEndWith(AtlasViewerPath,".mat")} = "DemoAug2026.mat" % name of an included file OR path to your own file
     end
 
     %% Core Properties
@@ -29,6 +30,18 @@ classdef ConnectivityGroupSeed < internal.PipelineStep
         RunType                  = "Group"
     end
 
+    %% Setter
+
+    methods
+        function obj = set.AtlasViewerPath(obj, value)
+            % try to get filepath
+            obj.getAtlasViewerFilepath(value);
+
+            % if it didn't error, set the value
+            obj.AtlasViewerPath = value;
+        end
+    end
+
     %% Overrides
     methods (Access = protected)
         function StepSpecificFigureSetup(obj)
@@ -45,9 +58,7 @@ classdef ConnectivityGroupSeed < internal.PipelineStep
             %% Load and prepare pre-calculated sensitivity
 
             % Load
-            proj = currentProject;
-            filepath = proj.RootFolder + filesep + "external" + filesep + "AtlasViewer_Sensitivity" + filesep + "DemoAug2026.mat";
-            precalculated = load(filepath);
+            precalculated = load(obj.getAtlasViewerFilepath());
 
             % Calculate log-sensitivity
             logAdot = log10(precalculated.Adot + eps + 1);
@@ -201,4 +212,26 @@ classdef ConnectivityGroupSeed < internal.PipelineStep
         end
     end
 
+    %% Private
+
+    methods (Access = private)
+        function [filepath] = getAtlasViewerFilepath(obj, value)
+            if nargin<2
+                value = obj.AtlasViewerPath;
+            end
+
+            % Assume included file...
+            proj = currentProject;
+            filepath = proj.RootFolder + filesep + "external" + filesep + "AtlasViewer_Sensitivity" + filesep + value;
+
+            % If not included file, check if valid path
+            if ~exist(filepath, "file")
+                filepath = value;
+                if ~exist(filepath, "file")
+                    % If not valid path, error
+                    error("AtlasViewerPath must be either the name of a provided AtlasViewer file or the path to your own AtlasViewer file")
+                end
+            end
+        end
+    end
 end
