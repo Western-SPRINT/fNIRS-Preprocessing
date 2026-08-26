@@ -47,13 +47,8 @@ classdef OpticalDensity < internal.PipelineStep
     %% Figure
     methods (Access = protected)
         function StepSpecificFigurePre(obj, pipeline, data, tableRow)
-            % Count channels
-            channels = getChannels(data);
-            nChannels = height(channels);
-
-            % How many columns will be needed?
-            obj.FigureData.channelsPerColumn = obj.FigureChannelsPerColumn;
-            obj.FigureData.nColumn = ceil(nChannels / obj.FigureData.channelsPerColumn);
+            % Set channels per column
+			obj.SetNumberOfColumns(data);
 
             % Set figure size
             obj.SetFigureSize(5 + ((obj.FigureData.nColumn + 2)*25), 30)

@@ -53,12 +53,8 @@ classdef SummaryFigure < internal.PipelineStep
                     
                     % If this is the first, initialize the figure
                     if ~initialized
-                        % Count channels
-                        channels = getChannels(file.data);
-                        nChannels = height(channels);
-
-                        % How many columns will be needed?
-                        obj.FigureData.nColumn = ceil(nChannels / obj.FigureChannelsPerColumn);
+                        % Set channels per column
+						obj.SetNumberOfColumns(file.data);
 
                         % Set figure size
                         obj.SetFigureSize(5 + ((obj.FigureData.nColumn + 2)*25), (15 * nSteps))

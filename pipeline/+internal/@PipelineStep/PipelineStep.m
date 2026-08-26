@@ -7,9 +7,9 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
     end
 
     properties (Hidden)
-        FigureResolution        (1,1) double     = 175
-        FigureChannelsPerColumn (1,1) double     = 35
-        FigureNormalize         (1,1) logical    = false
+        FigureResolution           (1,1) double     = 175
+        FigureMaxChannelsPerColumn (1,1) double     = 35
+        FigureNormalize            (1,1) logical    = false
     end
 
     properties (SetAccess = protected, Hidden)
@@ -326,6 +326,18 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             % override if needed
         end
 
+        function SetNumberOfColumns(obj, data)
+            % Count channels
+            channels = getChannels(data);
+            nChannels = height(channels);
+
+            % How many columns?
+            obj.FigureData.nColumn = ceil(nChannels / obj.FigureMaxChannelsPerColumn);
+
+            % How many channels in each column?
+            obj.FigureData.channelsPerColumn = ceil(nChannels / obj.FigureData.nColumn);
+        end
+
         function DrawStackedPlotColumns(obj, data, name, normalize)
             arguments
                 obj         (1,1) internal.PipelineStep
@@ -374,7 +386,7 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             for col = 1:obj.FigureData.nColumn
                 nexttile
 
-                channelRange = [1 obj.FigureChannelsPerColumn] + ((col-1)*obj.FigureChannelsPerColumn);
+                channelRange = [1 obj.FigureData.channelsPerColumn] + ((col-1)*obj.FigureData.channelsPerColumn);
                 channelRange(2) = min(nChannels, channelRange(2));
 
                 hold on
@@ -399,7 +411,7 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
                 set(gca, YTick=ticks(end:-1:1), YTickLabel=labels(end:-1:1), FontSize=5)
 
                 xlim(data.time([1 end]))
-                ylim([-(obj.FigureChannelsPerColumn*obj.FigureData.scale) obj.FigureData.scale] + ticks(1))
+                ylim([-(obj.FigureData.channelsPerColumn*obj.FigureData.scale) obj.FigureData.scale] + ticks(1))
 
                 xlabel("Time (sec)")
 
