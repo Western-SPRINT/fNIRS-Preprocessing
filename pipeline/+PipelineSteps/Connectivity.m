@@ -36,13 +36,17 @@ classdef Connectivity < internal.PipelineStep
 
     methods (Access = protected)
         function [data] = StepSpecificAcquisitionProcessing(obj, pipeline, data, tableRow)
-            % If SDC are still present (weren't regressed out), then delete them
-            %   Also need to count how many were viable
-            channels = getChannels(data);
-            if any(channels.ShortSeperation)
-                % count viable
+            % If SDC regression was performed, then the number of viable
+            % SDCs will already be stored as data.demographics.SDCReg_ViableSDCs
+            %
+            % If not, then count them here:
+            if ~data.demographics.iskey('SDCReg_ViableSDCs')
+                channels = getChannels(data);
                 data.demographics.Connectivity_DeletedViableSDCs = nnz(channels.ShortSeperation & ~channels.Excluded);
+            end
 
+            % Delete all SDCs
+            if any(data.probe.link.ShortSeperation)
                 % delete
                 jobs = nirs.modules.RemoveShortSeperations;
                 data = jobs.run(data);

@@ -71,19 +71,24 @@ classdef SDCRegress < internal.PipelineStep
                 jobs.maxnumcomp = obj.MaxComponents; 
                 jobs.splittypes = obj.IndependentOxyDeoxy; 
 
-                % Delete excluded SDCs
-                % Remaining SDCs will be used for regression and then also deleted right after
-                toRemove = (data.probe.link.ShortSeperation & data.probe.link.Excluded);
-                data.probe.link(toRemove, :) = [];
-                data.data(:, toRemove) = [];
+                % Temporarily set excluded SDC as non-SDC so that they are
+                % not used during regression
+                isExcludedSDC = (data.probe.link.ShortSeperation & data.probe.link.Excluded);
+                data.probe.link.ShortSeperation(isExcludedSDC) = false;
 
                 % Run regression (using only the non-excluded SDCs)
                 text = evalc('data = jobs.run(data);'); %redirect messages
+
+                % Restore SDC flags
+                data.probe.link.ShortSeperation(isExcludedSDC) = true;
             end
 
-            % Remove SDCs
-            jobs = nirs.modules.RemoveShortSeperations;
-            data = jobs.run(data);
+            % Mark all SDCs as excluded
+            data.probe.link.Excluded(data.probe.link.ShortSeperation) = true;
+
+            % Note that SDCs are not deleted at this time because that would
+            % cause stacked plots to change order. SDCs are removed later
+            % during Connectivity (before calculations).
         end
     end
 
