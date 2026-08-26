@@ -25,4 +25,4 @@ Documentation is currently in-progress. More resources will be available through
 Please contact kstubbs5[at]uwo.ca for all inquiries.
 
 ## Acknowledgements
-This work is funded by [Brain Canada](https://braincanada.ca/funded-grants/sprint-fnirs-platform-for-brain-monitoring-analytics-and-data-repository) and formerly [BrainsCAN](https://brainscan.uwo.ca/index.html). Click [here](https://www.uwo.ca/bmi/research/onrgroup/index.html) to learn more about Western University's Optical Neuroimaging Research Group (ONRG, pronounced like "energy").
+This work is funded by [Brain Canada](https://braincanada.ca/funded-grants/sprint-fnirs-platform-for-brain-monitoring-analytics-and-data-repository) (and formerly [BrainsCAN](https://brainscan.uwo.ca/index.html)) in collaboration with [Synapse NeuroAnalytics](https://www.synapseneuroanalytics.com/). Click [here](https://www.uwo.ca/bmi/research/onrgroup/index.html) to learn more about Western University's Optical Neuroimaging Research Group (ONRG, pronounced like "energy").
