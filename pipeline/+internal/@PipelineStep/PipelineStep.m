@@ -384,7 +384,9 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
                              (data.probe.link.ChannelIndex <= channelRange(2)) & ...
                              selectLinkDatatype(data, data.probe.types(i)) & ...
                              (~data.probe.link.Excluded);
-                    plot(data.time, values(:, select), Color=datatypeColours(i,:));
+                    if any(select)
+                        plot(data.time, values(:, select), Color=datatypeColours(i,:));
+                    end
                     p(i) = plot(nan, nan, Color=datatypeColours(i,:), LineWidth=5);
                 end
                 hold off
