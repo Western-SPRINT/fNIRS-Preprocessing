@@ -4,7 +4,7 @@ classdef ConnectivityGroupSeed < internal.PipelineStep
         Suffix                              = "Seed"
         SeedChannelIndices (1,:) double     = nan
         DrawChannelLines   (1,1) logical    = false
-        AtlasViewerPath    (1,1) string {mustEndWith(AtlasViewerPath,".mat")} = "DemoAug2026.mat" % name of an included file OR path to your own file
+        SensitivityPrecalcPath    (1,1) string {mustEndWith(SensitivityPrecalcPath,".mat")} = "DemoAug2026.mat" % name of an included file OR path to your own file
     end
 
     %% Core Properties
@@ -33,12 +33,12 @@ classdef ConnectivityGroupSeed < internal.PipelineStep
     %% Setter
 
     methods
-        function obj = set.AtlasViewerPath(obj, value)
+        function obj = set.SensitivityPrecalcPath(obj, value)
             % try to get filepath
             obj.getAtlasViewerFilepath(value);
 
             % if it didn't error, set the value
-            obj.AtlasViewerPath = value;
+            obj.SensitivityPrecalcPath = value;
         end
     end
 
@@ -217,7 +217,7 @@ classdef ConnectivityGroupSeed < internal.PipelineStep
     methods (Access = private)
         function [filepath] = getAtlasViewerFilepath(obj, value)
             if nargin<2
-                value = obj.AtlasViewerPath;
+                value = obj.SensitivityPrecalcPath;
             end
 
             % Assume included file...
@@ -229,7 +229,7 @@ classdef ConnectivityGroupSeed < internal.PipelineStep
                 filepath = value;
                 if ~exist(filepath, "file")
                     % If not valid path, error
-                    error("AtlasViewerPath must be either the name of a provided AtlasViewer file or the path to your own AtlasViewer file")
+                    error("SensitivityPrecalcPath must be either the name of a provided AtlasViewer file or the path to your own AtlasViewer file")
                 end
             end
         end
