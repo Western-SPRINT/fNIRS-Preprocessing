@@ -37,7 +37,7 @@ classdef QCMotionCorrection < internal.PipelineStep
     methods (Access = protected)
         function [data] = StepSpecificAcquisitionProcessing(obj, pipeline, data, tableRow)
             % Create a backup copy of the raw timeseries to restore after QC
-            data.demographics.RawTimecourse = data.data;
+            rawTimecourse = data.data;
             
             % Define Jobs: TDDR + WaveletFilter
             jobs                = [];
@@ -62,6 +62,13 @@ classdef QCMotionCorrection < internal.PipelineStep
 
             % Run jobs
             data = jobs.run(data);
+
+            % Store the motion-corrected timecourse
+            mc = nirs.core.GenericData(data.data, data.time, data.probe.link, "QCMotionCorrection");
+            data.auxillary.QCMotionCorrection = mc;
+
+            % Restore the raw timecourse
+            data.data = rawTimecourse;
         end
     end
 
@@ -100,6 +107,9 @@ classdef QCMotionCorrection < internal.PipelineStep
         end
 
         function StepSpecificFigurePost(obj, pipeline, data, tableRow)
+            % Use QCMotionCorrection timecourse
+            data.data = data.auxillary.QCMotionCorrection.data;
+
             % Output name
             name = "After Motion Correction";
 

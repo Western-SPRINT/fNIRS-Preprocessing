@@ -31,9 +31,9 @@ classdef OpticalDensity < internal.PipelineStep
 
     methods (Access = protected)
         function [data] = StepSpecificAcquisitionProcessing(obj, pipeline, data, tableRow)
-            % Ensure that raw timeseries is in data.data (not QC timeseries)
-            if data.demographics.iskey('RawTimecourse')
-                error("Demographics still contains RawTimecourse, which means that QCCalculate was not run.", data.demographics.FullName)
+            % Remove QCMotionCorrection if it is still present
+            if data.auxillary.iskey('QCMotionCorrection')
+                data.auxillary = data.auxillary.remove('QCMotionCorrection');
             end
 
             % OD from NIRS Toolbox

@@ -73,13 +73,20 @@ classdef QCCalculate < internal.PipelineStep
             jobs.calc_PSP                   = true;
             jobs.samples_to_run             = []; % leave this empty to run all windows
 
+            % If QCMotionCorrection run, use that timecourse for SCI/PSP
+            hasMC = data.auxillary.iskey('QCMotionCorrection');
+            if hasMC
+                rawTimecourse = data.data;
+                data.data = data.auxillary.QCMotionCorrection.data;
+            end
+
             % Run
             data.demographics.SCIPSP = jobs.run(data);
 
-            % If QC Motion Correction was run, restore timeseries to raw and remove the backup
-            if pipeline.ContainsStep("PipelineSteps.QCMotionCorrection")
-                data.data = data.demographics.RawTimecourse;
-                data.demographics = data.demographics.remove('RawTimecourse');
+            % If QCMotionCorrection run, revert back to raw and remove QCMotionCorrection
+            if hasMC
+                data.data = rawTimecourse;
+                data.auxillary = data.auxillary.remove('QCMotionCorrection');
             end
 
             % Store cardiac range used
