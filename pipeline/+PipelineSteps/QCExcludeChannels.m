@@ -44,7 +44,7 @@ classdef QCExcludeChannels < internal.PipelineStep
             data.demographics.SCIPSP.channels.ratioClean = mean(cleanChannel, 2);
 
             % Flag sub-threshold channels for later exclusion (data is not modified at this time)
-            channels_exclude = data.demographics.SCIPSP.channels.ratioClean < obj.ExcludeChannelsBelowRatioClean;
+            channelsExclude = data.demographics.SCIPSP.channels.ratioClean < obj.ExcludeChannelsBelowRatioClean;
 
             % (Optional) Exclude any channels with sub-threshold tSNR (averaged across wavelengths)
             if obj.tSNRThreshold > 0
@@ -59,15 +59,15 @@ classdef QCExcludeChannels < internal.PipelineStep
                     select = (data.probe.link.source==s) & (data.probe.link.detector==d);
                     tSNRMean = nanmean(tSNR(select));
                     if tSNRMean < obj.tSNRThreshold
-                        channels_exclude(i) = true;
+                        channelsExclude(i) = true;
                     end
                 end
             end
 
             % Store exclusions
-            data.demographics.('ExcludedChannels') = data.demographics.SCIPSP.channels(channels_exclude,:);
-            if any(channels_exclude)
-                for i = find(channels_exclude(:)')
+            data.demographics.('ExcludedChannels') = data.demographics.SCIPSP.channels(channelsExclude,:);
+            if any(channelsExclude)
+                for i = find(channelsExclude(:)')
                     inds = (data.probe.link.source == measures.channels.source(i)) & ...
                         (data.probe.link.detector == measures.channels.detector(i));
                     data.probe.link.Excluded(inds) = true;
