@@ -6,6 +6,11 @@ end
 % Parse filepath
 [fol, name, ext] = fileparts(filepath);
 
+% If no folder path, then it is in the current folder
+if fol == ""
+    fol = string(pwd);
+end
+
 % Must be .m
 if ext ~= ".m"
     error("File must be .m")
