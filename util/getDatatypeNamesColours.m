@@ -1,5 +1,10 @@
 function [datatypeNames, datatypeColours] = GetDatatypeNamesColours(types)
-    if isnumeric(types)
+    if isempty(types)
+        % possible if all channels were excluded
+        datatypeNames = string([]);
+        datatypeColours = zeros(0,3);
+
+    elseif isnumeric(types)
         % wavelengths
         datatypeNames = arrayfun(@(wl) sprintf("%dnm", wl), types);
         datatypeColours = lines(length(types));
