@@ -351,8 +351,15 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             %   obj.FigureData.nColumn
             %   obj.FigureData.scale
 
-            %% Prepare Channels
+            %% Default NaN obj.FigureData.scale to 1
+            if isnan(obj.FigureData.scale)
+                scale = 1;
+            else
+                scale = obj.FigureData.scale;
+            end
 
+
+            %% Prepare Channels
             channels = getChannels(data);
             nChannels = height(channels);
             data.probe.link.ChannelIndex(:) = nan;
@@ -363,6 +370,7 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             nDatatypes = length(data.probe.types);
             [datatypeNames, datatypeColours] = getDatatypeNamesColours(data.probe.types);
             datatypeColours(:,4) = 0.5;
+
 
             %% Prepare Data
 
@@ -378,8 +386,8 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             end
 
             % Stack (channel 1 at top)
-            channelY = (nChannels-(1:nChannels))*obj.FigureData.scale;
-            values = values + ((nChannels - data.probe.link.ChannelIndex) * obj.FigureData.scale)';
+            channelY = (nChannels-(1:nChannels))*scale;
+            values = values + ((nChannels - data.probe.link.ChannelIndex) * scale)';
 
 
             %% Draw columns
@@ -411,7 +419,7 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
                 set(gca, YTick=ticks(end:-1:1), YTickLabel=labels(end:-1:1), FontSize=5)
 
                 xlim(data.time([1 end]))
-                ylim([-(obj.FigureData.channelsPerColumn*obj.FigureData.scale) obj.FigureData.scale] + ticks(1))
+                ylim([-(obj.FigureData.channelsPerColumn*scale) scale] + ticks(1))
 
                 xlabel("Time (sec)")
 
