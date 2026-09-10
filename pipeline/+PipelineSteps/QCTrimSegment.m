@@ -75,8 +75,8 @@ classdef QCTrimSegment < internal.PipelineStep
                 % Find best segment start time...
                 bestValue = 0;
                 bestStart = nan;
-                for i = 1 : (samplesTotal - samplesSegment - 1)
-                    value = mean(cleanOverall(i:(i+samplesSegment-1)));
+                for i = 1 : (samplesTotal - samplesSegment)
+                    value = mean(cleanOverall(i:(i+samplesSegment)));
                     if value > bestValue % new best segment
                         bestValue = value;
                         bestStart = i;
@@ -84,7 +84,7 @@ classdef QCTrimSegment < internal.PipelineStep
                 end
 
                 % Time points of best segment
-                indKeep = bestStart : (bestStart + samplesSegment - 1);
+                indKeep = bestStart : (bestStart + samplesSegment);
             end
 
             % Store results
