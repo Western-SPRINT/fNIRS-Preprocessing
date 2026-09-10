@@ -190,7 +190,11 @@ classdef ConnectivityGroup < internal.PipelineStep
             colourGreat = [0.1 0.8 0.1];
             colourPoor =  [0.8 0.1 0.1];
             n = 1 + nAcq;
-            cmap = cell2mat(arrayfun(@(a,b) linspace(a,b,n)', colourPoor, colourGreat, 'UniformOutput', false));
+            n1 = ceil(n*0.5);
+            n2 = n - n1 + 1;
+            pos_neg = cell2mat(arrayfun(@(a,b) linspace(a,b,n1)', colourPoor, colourGreat, 'UniformOutput', false));
+            neg_black = cell2mat(arrayfun(@(a,b) linspace(a,b,n2)', [0 0 0], colourPoor, 'UniformOutput', false));
+            cmap = [neg_black; pos_neg(2:end,:)];
 
             hold on
 
