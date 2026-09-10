@@ -440,7 +440,9 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             hold on
                 for i = 1:nDatatypes
                     select = ~data.probe.link.Excluded & selectLinkDatatype(data, data.probe.types(i));
-                    plot(freq, power(:, select), Color=datatypeColours(i,:));
+                    if any(select)
+                        plot(freq, power(:, select), Color=datatypeColours(i,:));
+                    end
                     p(i) = plot(nan, nan, Color=datatypeColours(i,:), LineWidth=5);
                 end
             hold off
@@ -458,7 +460,9 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
                 xlim([freq(1) (passband(2)*1.5)])
             else
                 % Cut off low frequencies
-                ylim([0 nanmax(nanmax(power(freq > 0.05, ~data.probe.link.Excluded)))])
+                if any(~data.probe.link.Excluded)
+                    ylim([0 nanmax(nanmax(power(freq > 0.05, ~data.probe.link.Excluded)))])
+                end
                 xlim(freq([1 end]))
             end
         end
@@ -514,13 +518,15 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             [datatypeNames, datatypeColours] = getDatatypeNamesColours(data.probe.types);
 
             % draw
-            switch class(data)
-                case "nirs.core.Data"
-                    imagesc(corr(data.data))
-                case "nirs.core.sFCStats"
-                    imagesc(data.Z)
-                otherwise
-                    error("Unsupproted data type")
+            if height(data.probe.link)
+                switch class(data)
+                    case "nirs.core.Data"
+                        imagesc(corr(data.data))
+                    case "nirs.core.sFCStats"
+                        imagesc(data.Z)
+                    otherwise
+                        error("Unsupproted data type")
+                end
             end
             colormap(gca, colourMap3)
             clim([-1 +1])
