@@ -79,8 +79,8 @@ s.MaxComponents       = 6;
 s.IndependentOxyDeoxy = false;
 s.ParallelPools       = 0;
 
-s = PipelineSteps.HbT(p);
-s.SubfolderFigures = "3-7_HbT";
+s = PipelineSteps.CalculateHbT(p);
+s.SubfolderFigures = "3-7_CalculateHbT";
 
 s = PipelineSteps.SummaryFigure(p);
 s.SubfolderFigures = "3-8_Summary";
