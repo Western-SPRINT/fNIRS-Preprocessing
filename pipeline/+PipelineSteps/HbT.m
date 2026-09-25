@@ -1,7 +1,7 @@
 classdef HbT < internal.PipelineStep
     %% Parameters
     properties
-        Suffix                             = "HbT"
+        Suffix                             = "CalculateHbT"
         ReorderByChromophore (1,1) logical = true
     end
 
