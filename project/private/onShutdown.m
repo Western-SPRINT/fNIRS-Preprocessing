@@ -8,6 +8,14 @@ if ~isempty(pathsToRemove)
     rmpath(pathsToRemove);
 end
 
+% Try to save the path in case any folders found their way onto the
+% permanent path (can happen when running multiple instances of MATLAB)
+try
+    savepath
+catch
+    warning("MATLAB Path could not be saved. Directories have been added/removed to the path for this session only.\nThe most common solution is to run MATLAB as admin and try agian.")
+end
+
 % Cleanup global variables
 clear global VersionInfo pathsToRemove
 
