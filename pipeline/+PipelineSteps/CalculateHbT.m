@@ -1,4 +1,4 @@
-classdef HbT < internal.PipelineStep
+classdef CalculateHbT < internal.PipelineStep
     %% Parameters
     properties
         Suffix                             = "CalculateHbT"
