@@ -6,6 +6,7 @@ classdef ImportRaw < internal.PipelineStep
         SDCFixedLengthMM  (1,1) double              = 8         % if non-NaN: SDCs have their lengths overwritten with this fixed value (in mm)
         ScaleToHeadSize   (1,1) logical             = true      % if true: all channel lengths are linearly scaled to acquisition's head size (HeadSize_cm in the AcquisitionTable)
         ReplaceMesh       (1,1) logical             = true      % if true: replace NIRS Toolbox default head mesh with corresponding NIRSite mesh
+        WriteRawBIDS      (1,1) logical             = true      % if true: write the raw BIDS files (snirf + sidecar files)
         CustomFunction    (1,1) {mustBeFcnOrMissing}= missing   % if non-missing: this function is called on each acquisition during import, must accept data+tableRow and return data
                                                                 %               getFunctionHandleFromPath(filepath) is included for convenience
         DeleteDemographics (1,1) logical            = true      % delete potentially identifying information in "data.demographics"
@@ -262,29 +263,34 @@ classdef ImportRaw < internal.PipelineStep
                 data = obj.CustomFunction(data, tableRow);
             end
 
-            % Need to temporarily convert TemplateLengths to a matrix
-            % because nirs.io.saveSNIRF cannot save tables.
-            %
-            % Note that TemplateLengths cannot be moved later because
-            % CustomFunction might need to adjust it (e.g., global channel
-            % exclusions)
-            backup = data.demographics.TemplateLengths;
-            data.demographics.TemplateLengths = table2array(data.demographics.TemplateLengths);
+            % If writing BIDS...
+            if obj.WriteRawBIDS
 
-            % Save to SNIRF
-            label = parseBIDSLabelsFromRow(pipeline, tableRow);
-            folder = pipeline.FolderOut + label.Subject + filesep + label.Session + filesep + "nirs" + filesep;
-            if ~exist(folder, "dir")
-                mkdir(folder)
+                % Need to temporarily convert TemplateLengths to a matrix
+                % because nirs.io.saveSNIRF cannot save tables.
+                %
+                % Note that TemplateLengths cannot be moved later because
+                % CustomFunction might need to adjust it (e.g., global channel
+                % exclusions)
+                backup = data.demographics.TemplateLengths;
+                data.demographics.TemplateLengths = table2array(data.demographics.TemplateLengths);
+    
+                % Save to SNIRF
+                label = parseBIDSLabelsFromRow(pipeline, tableRow);
+                folder = pipeline.FolderOut + label.Subject + filesep + label.Session + filesep + "nirs" + filesep;
+                if ~exist(folder, "dir")
+                    mkdir(folder)
+                end
+                filepath = folder + label.FullName;
+                nirs.io.saveSNIRF(data, [filepath.char '_fnirs.snirf'], false, true);
+                nirs.bids.stim2JSON(data.stimulus, [filepath.char '_event.json']);
+                nirs.bids.data2JSON(data, [filepath.char '_fnirs.json'], pipeline.TaskName.char);
+                nirs.bids.probe2JSON(data.probe, [filepath.char '_coordsystem.json']);
+    
+                % Restore TemplateLengths
+                data.demographics.TemplateLengths = backup;
+
             end
-            filepath = folder + label.FullName;
-            nirs.io.saveSNIRF(data, [filepath.char '_fnirs.snirf'], false, true);
-            nirs.bids.stim2JSON(data.stimulus, [filepath.char '_event.json']);
-            nirs.bids.data2JSON(data, [filepath.char '_fnirs.json'], pipeline.TaskName.char);
-            nirs.bids.probe2JSON(data.probe, [filepath.char '_coordsystem.json']);
-
-            % Restore TemplateLengths
-            data.demographics.TemplateLengths = backup;
         end
     end
 
