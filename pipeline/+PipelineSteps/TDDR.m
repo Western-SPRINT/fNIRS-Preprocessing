@@ -48,7 +48,7 @@ classdef TDDR < internal.PipelineStep
 			obj.SetNumberOfColumns(data);
 
             % Set figure size
-            obj.SetFigureSize(5 + ((obj.FigureData.nColumn + 2)*25), 30)
+            obj.SetFigureSize(5 + ((obj.FigureData.nColumn + 3)*25), 30)
 
             % Set scaling
             values = data.data(:, ~data.probe.link.Excluded);
@@ -58,7 +58,7 @@ classdef TDDR < internal.PipelineStep
             obj.FigureData.scale = nanmean(nanstd(values, 1)) * 2.0;
 
             % Setup tiles
-            tiledlayout(2, obj.FigureData.nColumn + 2, TileSpacing="tight")
+            tiledlayout(2, obj.FigureData.nColumn + 3, TileSpacing="tight")
 
             % Input name
             name = "Before TDDR";
@@ -73,6 +73,10 @@ classdef TDDR < internal.PipelineStep
             % Correlation
             nexttile
             obj.DrawDataCorrMatrix(data, name);
+
+            % Autocorrelation
+            nexttile
+            obj.DrawAutocorr(data, name);
         end
 
         function StepSpecificFigurePost(obj, pipeline, data, tableRow)
@@ -89,6 +93,10 @@ classdef TDDR < internal.PipelineStep
             % Correlation
             nexttile
             obj.DrawDataCorrMatrix(data, name);
+
+            % Autocorrelation
+            nexttile
+            obj.DrawAutocorr(data, name);
 
             % Main title
             sgtitle(strrep(data.demographics.FullName, "_", "\_"), FontSize=obj.FONT_SIZE_TITLE, FontWeight="bold")

@@ -57,10 +57,10 @@ classdef SummaryFigure < internal.PipelineStep
 						obj.SetNumberOfColumns(file.data);
 
                         % Set figure size
-                        obj.SetFigureSize(5 + ((obj.FigureData.nColumn + 2)*25), (15 * nSteps))
+                        obj.SetFigureSize(5 + ((obj.FigureData.nColumn + 3)*25), (15 * nSteps))
 
                         % Setup tiles
-                        tiledlayout(nSteps, obj.FigureData.nColumn + 2, TileSpacing="tight")
+                        tiledlayout(nSteps, obj.FigureData.nColumn + 3, TileSpacing="tight")
 
                         % Figure initialized
                         initialized = true;
@@ -95,6 +95,10 @@ classdef SummaryFigure < internal.PipelineStep
                     % Correlation
                     nexttile
                     obj.DrawDataCorrMatrix(file.data, name);
+
+                    % Autocorrelation
+                    nexttile
+                    obj.DrawAutocorr(file.data, name);
 
                     % Main title
                     sgtitle(strrep(file.data.demographics.FullName, "_", "\_"), FontSize=obj.FONT_SIZE_TITLE, FontWeight="bold")

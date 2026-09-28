@@ -566,6 +566,41 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             ylim(yl)
         end
 
+        function DrawAutocorr(obj, data, name, types)
+            arguments
+                obj     (1,1) internal.PipelineStep
+                data    (1,1) {mustBeA(data, ["nirs.core.Data" "nirs.core.sFCStats"])}
+                name    (1,1) string = missing
+                types   (1,:) string = []
+            end
+            
+            % Fourier
+            [autocorrs,lags] = calcAutocorr(data);
+
+            % Data types
+            nDatatypes = length(data.probe.types);
+            [datatypeNames, datatypeColours] = getDatatypeNamesColours(data.probe.types);
+            datatypeColours(:,4) = 0.2;
+
+            % Plot
+            p = nan(1, nDatatypes);
+            hold on
+            for i = 1:nDatatypes
+                select = ~data.probe.link.Excluded & selectLinkDatatype(data, data.probe.types(i));
+                if any(select)
+                    plot(lags, autocorrs(:, select), Color=datatypeColours(i,:));
+                end
+                p(i) = plot(nan, nan, Color=datatypeColours(i,:), LineWidth=5);
+            end
+            hold off
+
+            legend(p, datatypeNames, Location="EastOutside")
+
+            xlabel("Lag (seconds)")
+            ylabel("Correlation")
+            title("Autocorrelation: " + name)
+        end
+
         function DrawData2DConnectivity(obj, data, name, type, Zthresh, pthresh, qthresh)
             arguments
                 obj     (1,1) internal.PipelineStep

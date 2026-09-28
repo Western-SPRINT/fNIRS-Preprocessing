@@ -178,7 +178,7 @@ classdef QCTrimSegmentAndExcludeChannels < internal.PipelineStep
                 switch excluded
                     case false
                         % Included
-                        sp = [7 8];
+                        sp = [9 10];
                         name = "Viable Channels";
 
                     case true
@@ -187,7 +187,7 @@ classdef QCTrimSegmentAndExcludeChannels < internal.PipelineStep
                         name = "Excluded Channels";
                 end
 
-                subplot(2,6,sp)
+                subplot(2,8,sp)
 
                 p = nan(1, nDatatypes);
                 hold on
@@ -211,7 +211,7 @@ classdef QCTrimSegmentAndExcludeChannels < internal.PipelineStep
 
             %% Selection over raw timecourses
 
-            subplot(2,6,[3 4])
+            subplot(2,8,[3 4])
 
             nDatatypes = length(data.probe.types);
             [datatypeNames, datatypeColours] = getDatatypeNamesColours(data.probe.types);
@@ -245,7 +245,7 @@ classdef QCTrimSegmentAndExcludeChannels < internal.PipelineStep
 
             %% Selection over SCI/PSP
 
-            subplot(2,6,[9 10])
+            subplot(2,8,[11 12])
 
             % combined gradient to display
             quality = (metrics.SCI + metrics.PSP) / 2;
@@ -272,19 +272,27 @@ classdef QCTrimSegmentAndExcludeChannels < internal.PipelineStep
 
 
             %% Fourier before/after
-            subplot(2,6,5)
+            subplot(2,8,5)
             obj.DrawFourier(pipeline, obj.FigureData.Prior, "Before");
 
-            subplot(2,6,11)
+            subplot(2,8,13)
             obj.DrawFourier(pipeline, data, "After");
 
 
             %% Correlation matrix before/after
-            subplot(2,6,6)
+            subplot(2,8,6)
             obj.DrawDataCorrMatrix(obj.FigureData.Prior, "Before");
 
-            subplot(2,6,12)
+            subplot(2,8,14)
             obj.DrawDataCorrMatrix(data, "After");
+
+
+            %% Autocorrelation
+            subplot(2,8,7:8)
+            obj.DrawAutocorr(obj.FigureData.Prior, "Before");
+
+            subplot(2,8,15:16)
+            obj.DrawAutocorr(data, "After");
 
 
             %% Label
