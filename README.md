@@ -1,7 +1,7 @@
 # fNIRS-Preprocessing
 
 ## Requirements
-These tools are currently developed and tested on MATLAB 2026a.
+These tools are currently developed and tested on MATLAB 2026a. Version 2025a and later _should_ work.
 
 These official MATLAB toolboxes are required:
 1. Signal Processing Toolbox
