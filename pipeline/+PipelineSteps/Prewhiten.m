@@ -22,7 +22,7 @@ classdef Prewhiten < internal.PipelineStep
         TableFields = []
     end
     properties (Constant, Hidden)
-        PropertiesThatAffectData = ["MaxSeconds"]
+        PropertiesThatAffectData = ["MaxSeconds" , "DeleteArtifact"]
         CanGenerateFigure        = true
         MustGenerateFigure       = false
         SavesData                = true
