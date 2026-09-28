@@ -50,7 +50,12 @@ elseif repo.LastCommit.ID ~= NIRS_TOOLBOX_TARGET_VERSION
     end
 
     % create and move to new snapshot
-    repo.switchBranch("snapshot", Create=true, StartPoint=NIRS_TOOLBOX_TARGET_VERSION);
+    try
+        repo.switchBranch("snapshot", Create=true, StartPoint=NIRS_TOOLBOX_TARGET_VERSION);
+    catch
+        repo.createBranch("snapshot", StartPoint=NIRS_TOOLBOX_TARGET_VERSION);
+        repo.switchBranch("snapshot");
+    end
 end
 
 % Display
