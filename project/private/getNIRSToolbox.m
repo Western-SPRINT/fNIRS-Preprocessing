@@ -40,7 +40,9 @@ elseif repo.LastCommit.ID ~= NIRS_TOOLBOX_TARGET_VERSION
     fprintf("\tNIRS Toolbox is not on the required version. Migrating...\n");
     
     % move to main brain first
-    repo.switchBranch("master");
+    if repo.CurrentBranch.Name ~= "master" % check needed for 2025 and earlier
+        repo.switchBranch("master");
+    end
 
     % remove prior snapshot
     try
