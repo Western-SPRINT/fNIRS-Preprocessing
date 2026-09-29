@@ -89,7 +89,7 @@ classdef Prewhiten < internal.PipelineStep
             if obj.FigureNormalize
                 values = values ./ nanstd(values, 1);
             end
-            obj.FigureData.scale = nanmean(nanstd(values, 1)) * 2.0;
+            obj.FigureData.scale = nanmean(nanstd(values, 1)) * 3.0;
 
             % Setup tiles
             tiledlayout(2, obj.FigureData.nColumn + 3, TileSpacing="tight")
@@ -116,6 +116,13 @@ classdef Prewhiten < internal.PipelineStep
         function StepSpecificFigurePost(obj, pipeline, data, tableRow)
             % Output name
             name = "After Prewhiten";
+
+            % Adjust scaling
+            values = data.data(:, ~data.probe.link.Excluded);
+            if obj.FigureNormalize
+                values = values ./ nanstd(values, 1);
+            end
+            obj.FigureData.scale = nanmean(nanstd(values, 1)) * 3.0;
 
             % Draw stacked plots in nColumn
             obj.DrawStackedPlotColumns(data, name, obj.FigureNormalize);
