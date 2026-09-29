@@ -88,6 +88,13 @@ classdef Bandpass < internal.PipelineStep
             % Output name
             name = "After Bandpass";
 
+            % Adjust scaling
+            values = data.data(:, ~data.probe.link.Excluded);
+            if obj.FigureNormalize
+                values = values ./ nanstd(values, 1);
+            end
+            obj.FigureData.scale = nanmean(nanstd(values, 1)) * 3.0;
+
             % Draw stacked plots in nColumn
             obj.DrawStackedPlotColumns(data, name, obj.FigureNormalize);
 
