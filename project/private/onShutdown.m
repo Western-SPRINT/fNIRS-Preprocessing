@@ -8,6 +8,21 @@ if ~isempty(pathsToRemove)
     rmpath(pathsToRemove);
 end
 
+% Clean up MATLAB path...
+% get Project's location (add filesep to omit root folder)
+folder = matlab.project.currentProject().RootFolder + filesep;
+% get current MATLAB path
+currentPath = string(path);
+% split into folders
+pathFolders = currentPath.split(";");
+% find any project subfolders
+foldersToRemove = pathFolders(pathFolders.contains(folder));
+% any folders to remove
+if ~isempty(foldersToRemove)
+    fprintf("Removing project folders that should be on the MATLAB path yet...\n");
+    arrayfun(@rmpath, foldersToRemove)
+end
+
 % Try to save the path in case any folders found their way onto the
 % permanent path (can happen when running multiple instances of MATLAB)
 try
