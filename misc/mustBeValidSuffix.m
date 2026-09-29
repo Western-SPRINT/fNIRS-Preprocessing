@@ -15,9 +15,20 @@ if value.contains(["-" "_"])
     error("Suffix may not contain ""-"" or ""_""")
 end
 
-% must be valid in a filename
+% check if Java works
 try
-    java.io.File(value).toPath;
+    java.io.File(pwd);
+    javaWorks = true;
 catch
-    error("Suffix may not contain illegal filename characters")
+    javaWorks = false;
+end
+
+% can only validate if java works, else skip the check
+if javaWorks
+    % must be valid in a filename
+    try
+        java.io.File(value).toPath;
+    catch
+        error("Suffix may not contain illegal filename characters")
+    end
 end
