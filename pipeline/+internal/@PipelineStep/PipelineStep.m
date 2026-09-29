@@ -359,6 +359,14 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             end
 
 
+            %% Line width
+            if data.demographics.iskey('Passband')
+                lineWidth = 1.5;
+            else
+                lineWidth = 1;
+            end
+
+
             %% Prepare Channels
             channels = getChannels(data);
             nChannels = height(channels);
@@ -405,7 +413,7 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
                              selectLinkDatatype(data, data.probe.types(i)) & ...
                              (~data.probe.link.Excluded);
                     if any(select)
-                        plot(data.time, values(:, select), Color=datatypeColours(i,:));
+                        plot(data.time, values(:, select), Color=datatypeColours(i,:), LineWidth=lineWidth);
                     end
                     p(i) = plot(nan, nan, Color=datatypeColours(i,:), LineWidth=5);
                 end
