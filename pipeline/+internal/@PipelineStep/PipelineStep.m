@@ -593,6 +593,8 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             % Plot
             p = nan(1, nDatatypes);
             hold on
+            xl = [floor(lags(1)) ceil(lags(end))];
+            plot(xl, [0 0], "k")
             for i = 1:nDatatypes
                 select = ~data.probe.link.Excluded & selectLinkDatatype(data, data.probe.types(i));
                 if any(select)
@@ -603,6 +605,8 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             hold off
 
             legend(p, datatypeNames, Location="EastOutside")
+
+            xlim(xl)
 
             xlabel("Lag (seconds)")
             ylabel("Correlation")
