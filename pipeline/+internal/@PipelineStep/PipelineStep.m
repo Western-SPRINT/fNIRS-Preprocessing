@@ -419,7 +419,7 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
                 set(gca, YTick=ticks(end:-1:1), YTickLabel=labels(end:-1:1), FontSize=5)
 
                 xlim(data.time([1 end]))
-                ylim([-(obj.FigureData.channelsPerColumn*scale) scale] + ticks(1))
+                ylim([-(obj.FigureData.channelsPerColumn*scale) scale] + [-scale +scale] + ticks(1))
 
                 xlabel("Time (sec)")
 
