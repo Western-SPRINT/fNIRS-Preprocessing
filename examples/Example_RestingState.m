@@ -15,8 +15,11 @@ p.Overwrite     = true;
 
 s = PipelineSteps.ImportRaw(p);
 s.SubfolderFigures      = "1-1_Import";
+s.WriteRawBIDS          = true;
 s.ScaleToHeadSize       = true;
 % s.CustomFunction        = getFunctionHandleFromPath("PATH/TO/PROJECT-SPECIFIC/IMPORT/FUNCTION.m");
+s.SDCThresholdMM        = 10;
+s.SDCFixedLengthMM      = 8;
 
 s = PipelineSteps.VerifyMontages(p);
 s.SubfolderFigures      = "1-2_Verify";
@@ -36,21 +39,16 @@ s.AverageChannels       = true;
 s = PipelineSteps.QCCalculate(p);
 s.SubfolderFigures      = "2-3_QC_SCI-PSP";
 s.WindowSeconds         = 3;
-s.ParallelPools         = 0;
+s.ParallelPools         = 12;
 
-s = PipelineSteps.QCTrimSegment(p);
-s.SubfolderFigures              = "2-4_QC_Cleanest-Segment";
-s.SegmentSeconds                = 300;
-s.SCIThreshold                  = 0.6;
-s.PSPThreshold                  = 0.1;
-s.IgnoreChannelsBelowRatioClean = 0.3;
-
-s = PipelineSteps.QCExcludeChannels(p);
-s.SubfolderFigures               = "2-5_QC_Channel-Exclusion";
-s.SCIThreshold                   = 0.6;
-s.PSPThreshold                   = 0.1;
-s.ExcludeChannelsBelowRatioClean = 0.6;
-s.tSNRThreshold                  = 1.5;
+s = PipelineSteps.QCTrimSegmentAndExcludeChannels(p);
+s.SubfolderFigures                       = "2-4_QC_Cleanest-Segment_and_Channel-Exclusion";
+s.SegmentSeconds                        = 480;
+s.SCIThreshold                          = 0.6;
+s.PSPThreshold                          = 0.1;
+s.tSNRThreshold                         = 1.5;
+s.ExcludeChannelsBelowRatioClean        = 0.6;
+s.PrioratizeSegmentsWithAtLeastOneSDC   = true;
 
 
 %% Add steps: Preprocess and Analyze
@@ -77,32 +75,38 @@ s = PipelineSteps.SDCRegress(p);
 s.SubfolderFigures    = "3-6_SDC-Regression";
 s.MaxComponents       = 6;
 s.IndependentOxyDeoxy = false;
-s.ParallelPools       = 0;
+s.ParallelPools       = 12;
+
+s = PipelineSteps.Prewhiten(p);
+s.SubfolderFigures  = "3-7_Prewhiten";
+s.MaxSeconds        = 5;
+s.DeleteArtifact    = true;
+s.ParallelPools     = 12;
 
 s = PipelineSteps.CalculateHbT(p);
-s.SubfolderFigures = "3-7_CalculateHbT";
+s.SubfolderFigures = "3-8_CalculateHbT";
 
 s = PipelineSteps.SummaryFigure(p);
-s.SubfolderFigures = "3-8_Summary";
+s.SubfolderFigures = "3-9_Summary";
 
 s = PipelineSteps.Connectivity(p);
-s.SubfolderFigures = "3-9_Connectivity";
-s.Robust           = false;
+s.SubfolderFigures = "3-10_Connectivity";
+s.Robust           = true;
 s.FigureZThresh    = 0.5;
 s.FigurepThresh    = 1;
 s.FigureqThresh    = 0.01;
 
 s = PipelineSteps.ConnectivityGroup(p);
-s.SubfolderFigures   = "3-10_Connectivity-Group";
-s.MinShortChannels   = 0;
-s.MinLongChannels    = 0;
-s.MinDurationSeconds = 300;
+s.SubfolderFigures   = "3-11_Connectivity-Group";
+s.MinShortChannels   = 1;
+s.MinLongChannels    = 90;
+s.MinDurationSeconds = 480;
 s.FigureZThresh      = 0.5;
 s.FigurepThresh      = 1;
 s.FigureqThresh      = 1;
 
 s = PipelineSteps.ConnectivityGroupSeed(p);
-s.SubfolderFigures   = "3-11_Connectivity-Group-Seed";
+s.SubfolderFigures   = "3-12_Connectivity-Group-Seed";
 s.DrawChannelLines   = true;
 % s.SeedChannelIndices = 1:5;
 % s.SensitivityPrecalcPath = "PATH/TO/PRECALCULATED/SENSITIVITY.mat";
