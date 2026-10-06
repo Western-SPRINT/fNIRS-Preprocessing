@@ -634,10 +634,10 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             data.probe.link = data.probe.link(select, :);
             data.R = data.R(select, select);
 
-            % Remove Excluded
-            select = data.probe.link.Excluded;
-            data.probe.link(select, :) = [];
-            data.R = data.R(~select, ~select);
+            % % % Remove Excluded
+            % % select = data.probe.link.Excluded;
+            % % data.probe.link(select, :) = [];
+            % % data.R = data.R(~select, ~select);
 
             % Get channels
             channels = getChannels(data);
@@ -653,14 +653,18 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
                 qthresh = inf;
             end
 
-            % Thresholds
+            % Thresholds and exlcusions
             toDraw = (data.p < pthresh) & (data.q < qthresh) & (abs(data.Z) > Zthresh);
+            toDraw(channels.Excluded,:) = false;
+            toDraw(:,channels.Excluded) = false;
             
             hold on
 
                 % Draw channels and store their center coordinates
-                xs = [];
-                ys = [];
+                xs_included = [];
+                ys_included = [];
+                xs_excluded = [];
+                ys_excluded = [];
                 srcUsed = false(1, size(data.probe.srcPos, 1));
                 detUsed = false(1, size(data.probe.detPos, 1));
                 for i = 1:nChannel
@@ -676,11 +680,17 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
                     channels.X(i) = mean(x);
                     channels.Y(i) = mean(y);
 
-                    xs = [xs nan x];
-                    ys = [ys nan y];
+                    if channels.Excluded(i)
+                        xs_excluded = [xs_excluded nan x];
+                        ys_excluded = [ys_excluded nan y];
+                    else
+                        xs_included = [xs_included nan x];
+                        ys_included = [ys_included nan y];
+                    end
 
                 end
-                plot(xs, ys, "k", LineWidth=1);
+                plot(xs_excluded, ys_excluded, Color=[.8 .8 .8], LineWidth=0.5);
+                plot(xs_included, ys_included, Color=[0 0 0], LineWidth=1);
 
                 % Draw connectivity
                 for i = 1:nChannel
