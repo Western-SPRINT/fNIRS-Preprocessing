@@ -6,6 +6,9 @@ proj = currentProject;
 try
     % Get repo
     repo = gitrepo(proj.RootFolder);
+
+    % Fetch any changes
+    repo.fetch;
     
     % Display
     fprintf("Looking for changes on GitHub...\n")
@@ -20,8 +23,7 @@ try
         end
     end
 
-    % Fetch and pull
-    repo.fetch;
+    % Pull changes
     repo.pull;
 
     % Complete
