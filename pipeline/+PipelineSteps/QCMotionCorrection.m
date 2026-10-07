@@ -133,7 +133,9 @@ classdef QCMotionCorrection < internal.PipelineStep
             obj.DrawAutocorr(data, name);
 
             % Main title
-            sgtitle(strrep(data.demographics.FullName, "_", "\_"), FontSize=obj.FONT_SIZE_TITLE, FontWeight="bold")
+            t = sprintf("%s\niqr = %g", data.demographics.FullName, data.demographics.QCMotionCorrection_iqr);
+            t = strrep(t, "_", "\_");
+            sgtitle(t, FontSize=obj.FONT_SIZE_TITLE, FontWeight="bold")
         end
     end
 
