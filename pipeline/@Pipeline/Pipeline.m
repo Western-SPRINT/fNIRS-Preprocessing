@@ -324,20 +324,6 @@ classdef Pipeline < internal.Base & matlab.mixin.Copyable
             % Write
             writetable(tbl, filepath);
         end
-    end
-
-    %% Private Functions
-
-    methods (Access = private)
-        function PreRun(obj)
-            % (re)read table and confirm that all standard fields exist
-            obj.ReadTable();
-
-            % (optional) delete all files in the output folder that are not an input to the steps that are about to run (ensures a clean folder state)
-            if obj.DeletePriorOutputs
-                obj.DeletePrior();
-            end
-        end
 
         function ReadTable(obj)
             % read the run info spreadsheet
@@ -392,6 +378,20 @@ classdef Pipeline < internal.Base & matlab.mixin.Copyable
 
             % store
             obj.Table = tbl;
+        end
+    end
+
+    %% Private Functions
+
+    methods (Access = private)
+        function PreRun(obj)
+            % (re)read table and confirm that all standard fields exist
+            obj.ReadTable();
+
+            % (optional) delete all files in the output folder that are not an input to the steps that are about to run (ensures a clean folder state)
+            if obj.DeletePriorOutputs
+                obj.DeletePrior();
+            end
         end
 
         function DeletePrior(obj)
