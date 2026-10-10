@@ -645,7 +645,7 @@ classdef PipelineStep < internal.Base & matlab.mixin.Heterogeneous
             channels.Y(:) = nan;
             nChannel = height(channels);
 
-            % Thresholds and exlcusions
+            % Thresholds and exclusions
             toDraw = (abs(data.Z) > Zthresh);
             if (pthresh < 1)
                 toDraw(data.p > pthresh) = false;
