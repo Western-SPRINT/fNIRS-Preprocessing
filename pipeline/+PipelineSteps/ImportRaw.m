@@ -11,6 +11,7 @@ classdef ImportRaw < internal.PipelineStep
                                                                 %               getFunctionHandleFromPath(filepath) is included for convenience
         DeleteDemographics (1,1) logical            = true      % delete potentially identifying information in "data.demographics"
         DeleteTriggers    (1,1) logical             = false;    % clears data.stimulus
+        DownsampleHz      (1,1) double              = NaN;      % if non-Nan: downsample to this frequency if the imported rate was higher
     end
 
     %% Core Properties
@@ -33,7 +34,7 @@ classdef ImportRaw < internal.PipelineStep
                       }
     end
     properties (Constant, Hidden)
-        PropertiesThatAffectData = ["SDCThresholdMM" , "SDCFixedLengthMM", "ScaleToHeadSize", "ReplaceMesh", "CustomFunction", "DeleteDemographics"]
+        PropertiesThatAffectData = ["SDCThresholdMM" , "SDCFixedLengthMM", "ScaleToHeadSize", "ReplaceMesh", "CustomFunction", "DeleteDemographics", "DeleteTriggers", "DownsampleHz"]
         CanGenerateFigure        = true
         MustGenerateFigure       = false
         SavesData                = true
@@ -135,6 +136,13 @@ classdef ImportRaw < internal.PipelineStep
             % (Optional) delete triggers
             if obj.DeleteTriggers
                 data.stimulus = Dictionary;
+            end
+
+            % (Optional) downsample
+            if ~isnan(obj.DownsampleHz) && (obj.DownsampleHz > 0) && (data.Fs > obj.DownsampleHz)
+                jobs = nirs.modules.Resample;
+                jobs.Fs = obj.DownsampleHz;
+                data = jobs.run(data);
             end
 
             % Add labels to demographics
