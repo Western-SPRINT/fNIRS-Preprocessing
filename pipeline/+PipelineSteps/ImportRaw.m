@@ -10,6 +10,7 @@ classdef ImportRaw < internal.PipelineStep
         CustomFunction    (1,1) {mustBeFcnOrMissing}= missing   % if non-missing: this function is called on each acquisition during import, must accept data+tableRow and return data
                                                                 %               getFunctionHandleFromPath(filepath) is included for convenience
         DeleteDemographics (1,1) logical            = true      % delete potentially identifying information in "data.demographics"
+        DeleteTriggers    (1,1) logical             = false;    % clears data.stimulus
     end
 
     %% Core Properties
@@ -129,6 +130,11 @@ classdef ImportRaw < internal.PipelineStep
             %   Keep headmodel
             if obj.DeleteDemographics
                 data.demographics = Dictionary;
+            end
+
+            % (Optional) delete triggers
+            if obj.DeleteTriggers
+                data.stimulus = Dictionary;
             end
 
             % Add labels to demographics
